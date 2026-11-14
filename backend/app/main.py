@@ -39,15 +39,31 @@ logger = logging.getLogger("lax360")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Initializing LAX360 Universal Billing SaaS Backend...")
-    db_manager.connect()
 
+    # ── Database connection ────────────────────────────────────────────
+    # This will raise RuntimeError with a clear message if MONGO_URI is not
+    # set and USE_IN_MEMORY_FALLBACK=False, causing Render to exit with a
+    # descriptive error rather than a cryptic Connection Refused.
+    db_manager.connect()
+    logger.info(
+        "Database ready  (mock=%s, name=%s)",
+        db_manager.is_mock,
+        settings.DATABASE_NAME,
+    )
+
+    # ── Seed initial data ──────────────────────────────────────────────
     try:
         seed_database()
     except Exception as e:
-        logger.warning(f"Seed note: {e}")
+        logger.warning("Seed note (non-fatal): %s", e)
 
-    yield
-    logger.info("Shutting down LAX360 Backend...")
+    yield  # ── Application is running ───────────────────────────────
+
+    # ── Graceful shutdown ──────────────────────────────────────────────
+    logger.info("Shutting down LAX360 Backend – closing DB connection …")
+    db_manager.disconnect()
+
+
 
 
 app = FastAPI(
