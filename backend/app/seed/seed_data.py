@@ -297,11 +297,124 @@ def seed_database():
                     "tenant_id": t_id,
                     "table_number": f"T-{i}",
                     "floor": "Ground Floor",
-                    "capacity": 4 if i <= 4 else 6,
                     "status": "OCCUPIED" if i == 2 else "FREE",
                     "active_order": "KOT-0001" if i == 2 else None,
                     "created_at": now
                 })
+
+        # Seed sample invoices for dashboard metrics and reports
+        if len(item["products"]) >= 2 and db.invoices.count_documents({"tenant_id": t_id}) == 0:
+            p1_info = item["products"][0]
+            qty1 = 2
+            rate1 = float(p1_info["selling_price"])
+            trate1 = float(p1_info.get("tax_rate", 5))
+            taxable1 = round(qty1 * rate1, 2)
+            tax1 = round(taxable1 * (trate1 / 100.0), 2)
+            cgst1 = round(tax1 / 2.0, 2)
+            sgst1 = round(tax1 / 2.0, 2)
+            total1 = round(taxable1 + tax1, 2)
+
+            db.invoices.insert_one({
+                "id": str(uuid.uuid4()),
+                "tenant_id": t_id,
+                "invoice_number": f"{item.get('prefix', 'INV')}-{datetime.now(timezone.utc).year}-0001",
+                "invoice_type": "REGULAR",
+                "branch_id": "HQ",
+                "business_category": item["category"],
+                "customer_id": cust_id,
+                "customer_name": "Ananya Sharma",
+                "customer_phone": "9876501234",
+                "customer_gstin": "",
+                "customer_address": "Flat 402, Royal Palms",
+                "seller_name": item["name"],
+                "seller_gstin": item.get("gstin", ""),
+                "seller_address": item.get("address", ""),
+                "seller_city": item.get("city", ""),
+                "seller_state": item.get("state", "Delhi"),
+                "items": [{
+                    "product_id": str(uuid.uuid4()),
+                    "name": p1_info["name"],
+                    "sku": p1_info.get("sku", ""),
+                    "quantity": qty1,
+                    "unit": p1_info.get("unit", "Pcs"),
+                    "selling_price": rate1,
+                    "tax_rate": trate1,
+                    "taxable_amount": taxable1,
+                    "cgst_amount": cgst1,
+                    "sgst_amount": sgst1,
+                    "igst_amount": 0.0,
+                    "total_amount": total1
+                }],
+                "subtotal": taxable1,
+                "discount_amount": 0.0,
+                "cgst_total": cgst1,
+                "sgst_total": sgst1,
+                "igst_total": 0.0,
+                "total_tax": tax1,
+                "final_payable": total1,
+                "paid_amount": total1,
+                "balance_due": 0.0,
+                "payment_status": "PAID",
+                "payment_method": "UPI",
+                "created_by": item["owner"],
+                "created_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+            })
+
+            p2_info = item["products"][1]
+            qty2 = 1
+            rate2 = float(p2_info["selling_price"])
+            trate2 = float(p2_info.get("tax_rate", 5))
+            taxable2 = round(qty2 * rate2, 2)
+            tax2 = round(taxable2 * (trate2 / 100.0), 2)
+            cgst2 = round(tax2 / 2.0, 2)
+            sgst2 = round(tax2 / 2.0, 2)
+            total2 = round(taxable2 + tax2, 2)
+
+            db.invoices.insert_one({
+                "id": str(uuid.uuid4()),
+                "tenant_id": t_id,
+                "invoice_number": f"{item.get('prefix', 'INV')}-{datetime.now(timezone.utc).year}-0002",
+                "invoice_type": "REGULAR",
+                "branch_id": "HQ",
+                "business_category": item["category"],
+                "customer_id": None,
+                "customer_name": "Walk-in Retail Buyer",
+                "customer_phone": "9811223344",
+                "customer_gstin": "",
+                "customer_address": "Local Counter Sale",
+                "seller_name": item["name"],
+                "seller_gstin": item.get("gstin", ""),
+                "seller_address": item.get("address", ""),
+                "seller_city": item.get("city", ""),
+                "seller_state": item.get("state", "Delhi"),
+                "items": [{
+                    "product_id": str(uuid.uuid4()),
+                    "name": p2_info["name"],
+                    "sku": p2_info.get("sku", ""),
+                    "quantity": qty2,
+                    "unit": p2_info.get("unit", "Pcs"),
+                    "selling_price": rate2,
+                    "tax_rate": trate2,
+                    "taxable_amount": taxable2,
+                    "cgst_amount": cgst2,
+                    "sgst_amount": sgst2,
+                    "igst_amount": 0.0,
+                    "total_amount": total2
+                }],
+                "subtotal": taxable2,
+                "discount_amount": 0.0,
+                "cgst_total": cgst2,
+                "sgst_total": sgst2,
+                "igst_total": 0.0,
+                "total_tax": tax2,
+                "final_payable": total2,
+                "paid_amount": total2,
+                "balance_due": 0.0,
+                "payment_status": "PAID",
+                "payment_method": "CASH",
+                "created_by": item["owner"],
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
 
         print(f"Seeded vertical: {item['name']} ({email} / Demo@12345)")
 

@@ -11,16 +11,18 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     # Database
-    MONGODB_URI: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "lax360_billing")
+    MONGODB_URI: str = os.getenv("MONGODB_URI") or os.getenv("MONGO_URI") or "mongodb://localhost:27017"
+    DATABASE_NAME: str = os.getenv("DATABASE_NAME", "lax360_billing1")
     USE_IN_MEMORY_FALLBACK: bool = True  # Automatically falls back to mock if MongoDB Atlas/local is offline
 
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
+        "http://localhost:5174",
         "http://localhost:3000",
         "http://127.0.0.1:5173",
         "https://lax360-billing.vercel.app",
+        "https://lax360-billing-software.vercel.app",
         "*"
     ]
 

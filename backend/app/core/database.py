@@ -21,8 +21,9 @@ class DatabaseManager:
             # Try connecting to configured MongoDB
             client = MongoClient(
                 settings.MONGODB_URI,
-                serverSelectionTimeoutMS=1000,
-                connectTimeoutMS=1000
+                serverSelectionTimeoutMS=15000,
+                connectTimeoutMS=15000,
+                retryWrites=True
             )
             # Test server connection
             client.admin.command('ping')

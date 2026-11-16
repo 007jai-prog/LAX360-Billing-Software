@@ -1,9 +1,30 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const resolveApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim()) {
+    let clean = envUrl.trim().replace(/\/+$/, '');
+    if (!clean.endsWith('/api') && clean.startsWith('http')) {
+      clean = `${clean}/api`;
+    }
+    return clean;
+  }
+
+  // When deployed to production (e.g. Vercel) and no env var was injected at build time,
+  // automatically route API requests directly to the live Render backend
+  if (typeof window !== 'undefined' && window.location.hostname && !['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+    return 'https://lax360-billing-software.onrender.com/api';
+  }
+
+  // Local development fallback — proxied by Vite dev server
+  return '/api';
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 60000, // 60 seconds to accommodate Render free tier cold starts
   headers: {
     'Content-Type': 'application/json'
   }

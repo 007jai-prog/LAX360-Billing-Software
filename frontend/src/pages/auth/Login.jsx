@@ -93,11 +93,21 @@ export const Login = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      setServerError(
-        error.response?.data?.detail ||
-          error.response?.data?.message ||
-          'Invalid email or password.'
-      );
+      if (!error.response) {
+        setServerError(
+          'Cannot reach the backend server. The cloud backend on Render may be waking up from sleep (~20-30s). Please wait a moment and try again.'
+        );
+      } else if (error.response.status === 401) {
+        setServerError('Invalid email or password. Please verify your credentials.');
+      } else if (error.response.status >= 500) {
+        setServerError('A server error occurred. Please try again shortly.');
+      } else {
+        setServerError(
+          error.response?.data?.detail ||
+            error.response?.data?.message ||
+            'Sign in failed. Please check your details.'
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }

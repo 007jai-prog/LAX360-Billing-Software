@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useBusinessConfig } from '../../context/BusinessConfigContext';
 import { useAuth } from '../../context/AuthContext';
@@ -14,7 +14,9 @@ import {
   Boxes,
   Users,
   Sparkles,
-  Store
+  Store,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 const demoAccounts = [
@@ -42,13 +44,14 @@ const demoAccounts = [
     color: 'blue',
     description: 'Batch No, Expiry & Rx Log'
   },
-  // {
-  //   category: 'Textile & Garments',
-  //   email: 'demo.textile@lax360.com',
-  //   password: 'Demo@12345',
-  //   icon: 'Shirt',
-  //   color: 'rose',
-  // },
+  {
+    category: 'Textile & Garments',
+    email: 'demo.textile@lax360.com',
+    password: 'Demo@12345',
+    icon: 'Shirt',
+    color: 'rose',
+    description: 'Size Matrix & Barcode Tags'
+  },
   {
     category: 'Wholesale & Distribution',
     email: 'demo.wholesale@lax360.com',
@@ -144,13 +147,55 @@ export const Landing = () => {
   const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
 
+  const [loadingDemoEmail, setLoadingDemoEmail] = useState(null);
+  const [demoError, setDemoError] = useState(null);
+  const [isWakingServer, setIsWakingServer] = useState(false);
+
   const handleDemoLogin = async (email, password) => {
+    setLoadingDemoEmail(email);
+    setDemoError(null);
+    setIsWakingServer(false);
+
+    // If request takes longer than 3.5s, it indicates Render free-tier cold start
+    const wakeTimer = setTimeout(() => {
+      setIsWakingServer(true);
+    }, 3500);
+
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      const response = await login(email, password);
+      clearTimeout(wakeTimer);
+
+      const role = response?.user?.role;
+      const isAdmin = ['saas_super_admin', 'super_admin', 'platform_admin'].includes(role);
+
+      if (isAdmin) {
+        navigate('/admin/dashboard');
+      } else if (response?.tenant && !response.tenant.is_setup_completed) {
+        navigate('/setup-wizard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
+      clearTimeout(wakeTimer);
       console.error('Demo login failed:', error);
-      alert('Demo login failed. Make sure the backend is running and the demo account is available.');
+
+      let message = 'Unable to complete demo login.';
+      if (!error.response) {
+        message = 'Cannot connect to backend server. The cloud backend on Render may be waking up from sleep (takes ~20-30 seconds). Please wait a moment and try again.';
+      } else if (error.response.status === 401) {
+        message = 'Invalid demo credentials. The demo account may be undergoing re-seeding.';
+      } else if (error.response.status === 500) {
+        message = 'Backend server error occurred. Please verify database connectivity.';
+      } else if (error.response.data?.detail) {
+        message = typeof error.response.data.detail === 'string'
+          ? error.response.data.detail
+          : JSON.stringify(error.response.data.detail);
+      }
+
+      setDemoError(message);
+    } finally {
+      setLoadingDemoEmail(null);
+      setIsWakingServer(false);
     }
   };
 
@@ -384,25 +429,58 @@ export const Landing = () => {
               </p>
             </div>
 
+            {/* Waking cloud server notification */}
+            {isWakingServer && (
+              <div className="mx-auto mb-6 max-w-xl flex items-center justify-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-semibold text-amber-800 shadow-xs animate-pulse">
+                <Loader2 className="h-4 w-4 animate-spin text-amber-600 shrink-0" />
+                <span>Waking up cloud backend on Render (free tier cold start, takes ~20 seconds)...</span>
+              </div>
+            )}
+
+            {/* Error banner */}
+            {demoError && (
+              <div className="mx-auto mb-6 max-w-xl flex items-start justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-800 shadow-xs">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+                  <span>{demoError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDemoError(null)}
+                  className="rounded px-1.5 py-0.5 text-[10px] font-bold text-rose-700 hover:bg-rose-100"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {demoAccounts.map((demo) => {
                 const colors = colorClasses[demo.color];
+                const isLoadingThis = loadingDemoEmail === demo.email;
+                const isAnyLoading = Boolean(loadingDemoEmail);
 
                 return (
                   <button
                     key={demo.email}
                     type="button"
+                    disabled={isAnyLoading}
                     onClick={() => handleDemoLogin(demo.email, demo.password)}
-                    className={`flex items-start gap-4 rounded-2xl border bg-white p-5 text-left shadow-sm transition-all hover:shadow-md ${colors.border}`}
+                    className={`flex items-start gap-4 rounded-2xl border bg-white p-5 text-left shadow-sm transition-all hover:shadow-md disabled:cursor-wait disabled:opacity-60 ${colors.border} ${isLoadingThis ? 'ring-2 ring-indigo-500' : ''}`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colors.icon}`}
                     >
-                      <DynamicIcon name={demo.icon} className="h-5 w-5" />
+                      {isLoadingThis ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <DynamicIcon name={demo.icon} className="h-5 w-5" />
+                      )}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900">
-                        {demo.category}
+                      <p className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                        <span>{demo.category}</span>
+                        {isLoadingThis && <span className="text-[10px] font-medium text-indigo-600">(Signing in...)</span>}
                       </p>
                       <p className="text-xs text-slate-500">{demo.email}</p>
                       <span
@@ -419,10 +497,15 @@ export const Landing = () => {
             <div className="mt-8 text-center">
               <button
                 type="button"
+                disabled={Boolean(loadingDemoEmail)}
                 onClick={() => handleDemoLogin('admin@lax360.com', 'Admin@12345')}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-slate-800"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-md transition-all hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60"
               >
-                <ShieldCheck className="h-4 w-4 text-purple-400" />
+                {loadingDemoEmail === 'admin@lax360.com' ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-purple-400" />
+                ) : (
+                  <ShieldCheck className="h-4 w-4 text-purple-400" />
+                )}
                 <span>Launch SaaS Super Admin Console (admin@lax360.com)</span>
               </button>
             </div>
