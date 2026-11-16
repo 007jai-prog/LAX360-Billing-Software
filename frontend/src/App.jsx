@@ -21,7 +21,6 @@ import POS from './pages/pos/POS';
 import InvoicesList from './pages/invoices/InvoicesList';
 import ProductsList from './pages/products/ProductsList';
 import InventoryList from './pages/inventory/InventoryList';
-import CustomersList from './pages/customers/CustomersList';
 import SuppliersList from './pages/suppliers/SuppliersList';
 import PurchasesList from './pages/purchases/PurchasesList';
 import ExpensesList from './pages/expenses/ExpensesList';
@@ -33,7 +32,7 @@ import AdminPanel from './pages/admin/AdminPanel';
 // Specialized Business Vertical Pages
 import { RestaurantTables, KitchenOperations } from './pages/business_modules/RestaurantViews';
 import { PharmacyExpiry, PrescriptionsLog } from './pages/business_modules/PharmacyViews';
-import { BarcodeGenerator, TextileExchanges } from './pages/business_modules/TextileViews';
+import { TextileExchanges } from './pages/business_modules/TextileViews';
 import { WholesaleWarehouses } from './pages/business_modules/WholesaleViews';
 import { IMEILookup, RepairTickets } from './pages/business_modules/ElectronicsViews';
 
@@ -120,7 +119,6 @@ export const App = () => {
               <Route path="invoices" element={<InvoicesList />} />
               <Route path="products" element={<ProductsList />} />
               <Route path="inventory" element={<InventoryList />} />
-              <Route path="customers" element={<CustomersList />} />
               <Route path="suppliers" element={<SuppliersList />} />
               <Route path="purchases" element={<PurchasesList />} />
               <Route path="expenses" element={<ExpensesList />} />
@@ -134,7 +132,6 @@ export const App = () => {
               <Route path="specialized/pharmacy-expiry" element={<PharmacyExpiry />} />
               <Route path="specialized/grocery-batches" element={<PharmacyExpiry />} />
               <Route path="specialized/prescriptions" element={<PrescriptionsLog />} />
-              <Route path="specialized/barcode-generator" element={<BarcodeGenerator />} />
               <Route path="specialized/exchanges" element={<TextileExchanges />} />
               <Route path="specialized/warehouses" element={<WholesaleWarehouses />} />
               <Route path="specialized/imei-lookup" element={<IMEILookup />} />

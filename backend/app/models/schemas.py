@@ -133,19 +133,7 @@ class InvoiceCreateRequest(BaseModel):
     terms: Optional[str] = "Goods once sold are non-returnable after 7 days."
     metadata: Optional[Dict[str, Any]] = {}
 
-# ----------------- CUSTOMER & SUPPLIER -----------------
-class CustomerCreateRequest(BaseModel):
-    name: str
-    phone: str
-    email: Optional[str] = ""
-    gstin: Optional[str] = ""
-    billing_address: Optional[str] = ""
-    city: Optional[str] = ""
-    state: Optional[str] = ""
-    pincode: Optional[str] = ""
-    credit_limit: float = 0.0
-    customer_tier: str = "RETAIL" # RETAIL, DEALER, DISTRIBUTOR
-
+# ----------------- SUPPLIER -----------------
 class SupplierCreateRequest(BaseModel):
     name: str
     contact_person: Optional[str] = ""

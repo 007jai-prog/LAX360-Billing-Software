@@ -880,7 +880,7 @@ export const ProductsList = () => {
               </label>
               <input
                 type="text"
-                placeholder="e.g. Premium Basmati Rice"
+                placeholder="Enter the product name"
                 {...register('name', { required: 'Name is required' })}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -897,7 +897,7 @@ export const ProductsList = () => {
               </label>
               <input
                 type="text"
-                placeholder="e.g. RCE-001"
+                placeholder="Enter SKU"
                 {...register('sku', { required: 'SKU is required' })}
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />

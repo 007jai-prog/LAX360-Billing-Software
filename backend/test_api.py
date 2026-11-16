@@ -39,6 +39,30 @@ def test_category_configurations(client):
         assert len(cfg["sidebar_navigation"]) > 0
         assert len(cfg["product_fields"]) > 0
 
+def test_customers_module_removed(client):
+    for category in ["grocery", "restaurant", "pharmacy", "textile", "wholesale", "electronics"]:
+        response = client.get(f"/api/business-categories/{category}/config")
+        assert response.status_code == 200
+        assert all(
+            item["path"] != "/customers"
+            for item in response.json()["sidebar_navigation"]
+        )
+
+    assert client.get("/api/customers").status_code == 404
+
+def test_textile_barcode_tag_generator_removed(client):
+    config_res = client.get("/api/business-categories/textile/config")
+    assert config_res.status_code == 200
+    config = config_res.json()
+    assert "barcode_tag_generation" not in config["features"]
+    assert all(
+        item["name"] != "Barcode Tag Generator"
+        for item in config["sidebar_navigation"]
+    )
+
+    tags_res = client.get("/api/specialized/textile/tags/removed")
+    assert tags_res.status_code == 404
+
 def test_login_demo_user(client):
     res = client.post("/api/auth/login", json={
         "email": "demo.grocery@lax360.com",

@@ -42,14 +42,13 @@ const demoAccounts = [
     color: 'blue',
     description: 'Batch No, Expiry & Rx Log'
   },
-  {
-    category: 'Textile & Garments',
-    email: 'demo.textile@lax360.com',
-    password: 'Demo@12345',
-    icon: 'Shirt',
-    color: 'rose',
-    description: 'Size Matrix & Barcode Tags'
-  },
+  // {
+  //   category: 'Textile & Garments',
+  //   email: 'demo.textile@lax360.com',
+  //   password: 'Demo@12345',
+  //   icon: 'Shirt',
+  //   color: 'rose',
+  // },
   {
     category: 'Wholesale & Distribution',
     email: 'demo.wholesale@lax360.com',

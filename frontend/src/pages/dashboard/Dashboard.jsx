@@ -780,12 +780,9 @@ export const Dashboard = () => {
                 <p className="mt-1 text-xl font-extrabold text-indigo-600">
                   {metrics.variants_tracked || 0} Size/Color Combinations
                 </p>
-                <NavLink
-                  to="/specialized/barcode-generator"
-                  className="mt-1 inline-block text-[11px] font-bold text-indigo-600 hover:underline"
-                >
-                  Print Garment Tags →
-                </NavLink>
+                <span className="text-[11px] text-slate-400">
+                  Size and color variants tracked
+                </span>
               </div>
 
               <div className="rounded-2xl border border-slate-200/70 bg-white p-4">
@@ -814,12 +811,6 @@ export const Dashboard = () => {
                 <p className="mt-1 text-xl font-extrabold text-slate-900">
                   {metrics.active_dealers || 0} Accounts
                 </p>
-                <NavLink
-                  to="/customers"
-                  className="mt-1 inline-block text-[11px] font-bold text-indigo-600 hover:underline"
-                >
-                  Dealer Credit Ledger →
-                </NavLink>
               </div>
 
               <div className="rounded-2xl border border-slate-200/70 bg-white p-4">

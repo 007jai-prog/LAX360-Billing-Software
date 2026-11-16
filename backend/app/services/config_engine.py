@@ -28,10 +28,10 @@ BUSINESS_CATEGORIES = [
     {
         "id": "textile",
         "name": "Textile & Garments",
-        "tagline": "Size & color variant matrix, tag barcode generation, exchanges & seasonal lines",
+        "tagline": "Size & color variant matrix, exchanges & seasonal lines",
         "icon": "Shirt",
         "color": "rose",
-        "description": "Fashion retail solution managing size/color grids (S, M, L, XL), garment barcode tags, exchange management, and vendor returns."
+        "description": "Fashion retail solution managing size/color grids (S, M, L, XL), exchange management, and vendor returns."
     },
     {
         "id": "wholesale",
@@ -86,7 +86,6 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             {"name": "Invoices", "path": "/invoices", "icon": "FileText"},
             {"name": "Inventory & Stock", "path": "/inventory", "icon": "Boxes"},
             {"name": "Purchases", "path": "/purchases", "icon": "Truck"},
-            {"name": "Customers", "path": "/customers", "icon": "Users"},
             {"name": "Suppliers", "path": "/suppliers", "icon": "Building2"},
             {"name": "Expenses", "path": "/expenses", "icon": "Receipt"},
             {"name": "GST Reports", "path": "/reports", "icon": "BarChart3"},
@@ -187,7 +186,6 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             {"name": "Invoices", "path": "/invoices", "icon": "FileText"},
             {"name": "Medicine Inventory", "path": "/inventory", "icon": "Boxes"},
             {"name": "Purchases", "path": "/purchases", "icon": "Truck"},
-            {"name": "Customers / Patients", "path": "/customers", "icon": "Users"},
             {"name": "Pharma Suppliers", "path": "/suppliers", "icon": "Building2"},
             {"name": "Expenses", "path": "/expenses", "icon": "Receipt"},
             {"name": "GST Reports", "path": "/reports", "icon": "BarChart3"},
@@ -211,7 +209,6 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             "wholesale_retail_toggle": False,
             "sales_returns": True,
             "size_color_variants": True,
-            "barcode_tag_generation": True,
             "garment_exchange": True,
             "table_management": False,
             "kot_system": False,
@@ -219,7 +216,7 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             "tiered_pricing": False,
             "repair_services": False
         },
-        "pos_layout": "apparel_matrix", # variant selector: Size (S, M, L, XL), Color, Barcode tag
+        "pos_layout": "apparel_matrix", # variant selector: Size (S, M, L, XL), Color
         "product_fields": [
             {"key": "brand", "label": "Brand Name", "type": "text", "required": True},
             {"key": "sizes", "label": "Available Sizes (S, M, L, XL, XXL)", "type": "text", "default": "S, M, L, XL"},
@@ -231,12 +228,10 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             {"name": "Dashboard", "path": "/dashboard", "icon": "LayoutDashboard"},
             {"name": "Garments POS", "path": "/pos", "icon": "Shirt", "badge": "Variants"},
             {"name": "Apparel Catalog", "path": "/products", "icon": "Tag"},
-            {"name": "Barcode Tag Generator", "path": "/specialized/barcode-generator", "icon": "QrCode"},
             {"name": "Exchanges & Returns", "path": "/specialized/exchanges", "icon": "RefreshCw"},
             {"name": "Invoices", "path": "/invoices", "icon": "FileText"},
             {"name": "Variant Inventory", "path": "/inventory", "icon": "Boxes"},
             {"name": "Purchases", "path": "/purchases", "icon": "Truck"},
-            {"name": "Customers", "path": "/customers", "icon": "Users"},
             {"name": "Suppliers", "path": "/suppliers", "icon": "Building2"},
             {"name": "Expenses", "path": "/expenses", "icon": "Receipt"},
             {"name": "Sales & Tax Reports", "path": "/reports", "icon": "BarChart3"},
@@ -282,7 +277,6 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             {"name": "Dashboard", "path": "/dashboard", "icon": "LayoutDashboard"},
             {"name": "B2B Bulk Billing", "path": "/pos", "icon": "Coins", "badge": "B2B"},
             {"name": "Wholesale Catalog", "path": "/products", "icon": "Package2"},
-            {"name": "Dealers & Retailers", "path": "/customers", "icon": "Users2", "badge": "Ledger"},
             {"name": "Warehouses & Transfers", "path": "/specialized/warehouses", "icon": "Warehouse"},
             {"name": "Invoices", "path": "/invoices", "icon": "FileText"},
             {"name": "Bulk Inventory", "path": "/inventory", "icon": "Boxes"},
@@ -336,7 +330,6 @@ CATEGORY_CONFIGURATIONS: Dict[str, Dict[str, Any]] = {
             {"name": "Invoices", "path": "/invoices", "icon": "FileText"},
             {"name": "Serialized Inventory", "path": "/inventory", "icon": "Boxes"},
             {"name": "Purchases", "path": "/purchases", "icon": "Truck"},
-            {"name": "Customers", "path": "/customers", "icon": "Users"},
             {"name": "Suppliers", "path": "/suppliers", "icon": "Building2"},
             {"name": "Expenses", "path": "/expenses", "icon": "Receipt"},
             {"name": "GST & Warranty Reports", "path": "/reports", "icon": "BarChart3"},

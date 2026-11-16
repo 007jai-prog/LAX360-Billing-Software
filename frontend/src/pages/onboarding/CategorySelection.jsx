@@ -32,12 +32,11 @@ export const CategorySelection = () => {
       'Generic salt composition lookup',
       'Doctor prescription records'
     ],
-    textile: [
-      'Size & color variant matrix',
-      'Custom garment barcode tags',
-      'Apparel exchanges & returns',
-      'Seasonal collection categorization'
-    ],
+    // textile: [
+    //   'Size & color variant matrix',
+    //   'Apparel exchanges & returns',
+    //   'Seasonal collection categorization'
+    // ],
     wholesale: [
       'Tiered B2B bulk pricing',
       'Distributor / Dealer credit limits',

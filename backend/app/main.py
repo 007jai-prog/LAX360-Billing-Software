@@ -19,7 +19,6 @@ from app.routers import (
     billing,
     invoices,
     returns,
-    customers,
     suppliers,
     inventory,
     purchases,
@@ -39,31 +38,15 @@ logger = logging.getLogger("lax360")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Initializing LAX360 Universal Billing SaaS Backend...")
-
-    # ── Database connection ────────────────────────────────────────────
-    # This will raise RuntimeError with a clear message if MONGO_URI is not
-    # set and USE_IN_MEMORY_FALLBACK=False, causing Render to exit with a
-    # descriptive error rather than a cryptic Connection Refused.
     db_manager.connect()
-    logger.info(
-        "Database ready  (mock=%s, name=%s)",
-        db_manager.is_mock,
-        settings.DATABASE_NAME,
-    )
 
-    # ── Seed initial data ──────────────────────────────────────────────
     try:
         seed_database()
     except Exception as e:
-        logger.warning("Seed note (non-fatal): %s", e)
+        logger.warning(f"Seed note: {e}")
 
-    yield  # ── Application is running ───────────────────────────────
-
-    # ── Graceful shutdown ──────────────────────────────────────────────
-    logger.info("Shutting down LAX360 Backend – closing DB connection …")
-    db_manager.disconnect()
-
-
+    yield
+    logger.info("Shutting down LAX360 Backend...")
 
 
 app = FastAPI(
@@ -125,7 +108,6 @@ app.include_router(products.router, prefix=api_v1)
 app.include_router(billing.router, prefix=api_v1)
 app.include_router(invoices.router, prefix=api_v1)
 app.include_router(returns.router, prefix=api_v1)
-app.include_router(customers.router, prefix=api_v1)
 app.include_router(suppliers.router, prefix=api_v1)
 app.include_router(inventory.router, prefix=api_v1)
 app.include_router(purchases.router, prefix=api_v1)

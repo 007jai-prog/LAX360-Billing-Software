@@ -57,26 +57,6 @@ def get_prescriptions_log(current_user: dict = Depends(get_current_tenant_user))
     return rx_list
 
 # ----------------- TEXTILE & GARMENTS -----------------
-@router.get("/textile/tags/{product_id}")
-def get_garment_barcode_tag(product_id: str, current_user: dict = Depends(get_current_tenant_user)):
-    db = get_database()
-    tenant_id = current_user["tenant_id"]
-    product = db.products.find_one({"tenant_id": tenant_id, "id": product_id})
-    if not product:
-        raise HTTPException(status_code=404, detail="Garment item not found")
-
-    cfields = product.get("custom_fields", {})
-    return {
-        "brand": cfields.get("brand", "LAX Fashion"),
-        "style_name": product.get("name"),
-        "barcode": product.get("barcode") or product.get("sku"),
-        "sku": product.get("sku"),
-        "sizes": cfields.get("sizes", "M, L, XL"),
-        "colors": cfields.get("colors", "Navy, Black"),
-        "mrp": product.get("selling_price"),
-        "tax_inclusive": True
-    }
-
 @router.post("/textile/exchange")
 def process_garment_exchange(payload: dict, current_user: dict = Depends(get_current_tenant_user)):
     db = get_database()
